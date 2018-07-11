@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://unpkg.com/vue"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/crypto-js/3.1.9/crypto-js.js"></script>
+    <title>OCR</title>
+</head>
+
+<body>
+<div id="app">
+{{ocrResult}}
+</div>
+</body>
+<script>
+
+    function getQueryString (name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+        var r = window.location.search.substr(1).match(reg)
+        if (r != null) return unescape(r[2])
+        return null
+    }
+
+    var app = new Vue({
+        el: '#app',
+        computed: {
+            ocrResult: function() {
+                var EncodeOCRResult = getQueryString('ocr_result')
+                var encryptedWord;
+                var decrypted;
+                try {
+                    encryptedWord = CryptoJS.enc.Base64.parse(EncodeOCRResult); // encryptedWord via Base64.parse()
+                    decrypted = CryptoJS.enc.Utf8.stringify(encryptedWord);
+                } catch (error) {
+                    return "decode error"
+                }
+                return decrypted
+            }
+        }
+    })
+</script>
+
+</html>
