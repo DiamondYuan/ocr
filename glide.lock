@@ -1,0 +1,6 @@
+hash: fef3de8bb3ff56930fad6eea71a534ee0d51670aa7d8cc56bc75d9dd78ed7f62
+updated: 2018-07-26T11:36:53.029902+08:00
+imports:
+- name: github.com/deckarep/gosx-notifier
+  version: e127226297fb751aa3b582db5e92361fcbfc5a6c
+testImports: []

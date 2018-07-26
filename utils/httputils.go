@@ -1,4 +1,4 @@
-package BaiduOCR
+package utils
 
 import (
 	"encoding/json"
@@ -12,21 +12,33 @@ import (
 func Post(theUrl string, data interface{}, result interface{}) error {
 	content, _ := json.Marshal(data)
 	resp, err := http.Post(theUrl, "application/json;charset=utf-8", strings.NewReader(string(content)))
+	fmt.Println(resp.Status)
 	if err != nil {
 		return err
 	}
-
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
-
 	json.Unmarshal(body, result)
 	return nil
 }
 
-func PostByForm(theUrl string, params map[string]string, result interface{}) error {
+func Get(theUrl string) (string, error) {
+	resp, err := http.Get(theUrl)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(body), nil
+}
+
+func PostByForm(theUrl string, params map[string]string) (string, error) {
 
 	var values url.Values = make(map[string][]string)
 	for key, val := range params {
@@ -35,18 +47,14 @@ func PostByForm(theUrl string, params map[string]string, result interface{}) err
 	resp, err := http.PostForm(theUrl, values)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return "", err
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return "", err
 	}
-
-	// 打印结果
-	//fmt.Println(string(body))
-	json.Unmarshal(body, result)
-	return nil
+	return string(body), nil
 }

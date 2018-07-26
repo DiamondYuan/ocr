@@ -1,0 +1,3 @@
+package: github.com/DiamondYuan/ocr
+import:
+- package: github.com/deckarep/gosx-notifier

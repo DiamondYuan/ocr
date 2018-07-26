@@ -1,37 +1,34 @@
 package main
 
 import (
-	"log"
+	_ "image/png"
+	"os"
+	"github.com/DiamondYuan/ocr/ocrlib"
 	"os/exec"
-	ocr "github.com/DiamondYuan/ocr/BaiduOCR"
-	"github.com/deckarep/gosx-notifier"
-	"encoding/base64"
+	"github.com/DiamondYuan/ocr/utils"
+	"io/ioutil"
 )
 
 func main() {
-	sdk := ocr.BaiduSdk{
-		AppKey:    "",
-		AppSecret: "",
-	}
-	baidu := ocr.BaiduOcr{
-	}
-	baidu.Init(&sdk)
 	cmd := exec.Command("screencapture", "-i", "/tmp/ocr_snapshot.png")
-	err := cmd.Start()
+	err := cmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		os.Exit(0)
 	}
-	cmd.Wait()
-	result, _ := baidu.RecognizedImage("/tmp/ocr_snapshot.png")
+	var ocr ocrlib.OCR
+	ocr = new(ocrlib.Baidu)
+	result, ocrError := ocr.GetResult("/tmp/ocr_snapshot.png")
+	if ocrError != nil {
+		handleError(err)
+	}
 	writeToClipBoard(result)
-	encodeString := base64.StdEncoding.EncodeToString([]byte(result))
-	url := "https://diamondyuan.github.io/ocr/?ocr_result=" + encodeString
-	note := gosxnotifier.NewNotification("Ocr Result have copy to your clipboard.")
-	note.Title = "OCR"
-	note.Sender = "com.apple.Safari"
-	note.Link = url
-	note.Sound = gosxnotifier.Default
-	note.Push()
+	utils.SendNotify(result)
+	ioutil.WriteFile("/tmp/ocr_result", []byte(result), 0644)
+}
+
+func handleError(err error) {
+	utils.SendErrorNotify(err.Error())
+	os.Exit(0)
 }
 
 func writeToClipBoard(text string) error {
