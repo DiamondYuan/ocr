@@ -50,7 +50,7 @@
       }
     },
     created () {
-      this.ocrResult = decodeURIComponent(getQueryString('ocr_result'))
+      this.ocrResult = decodeURIComponent(getQueryString('ocr_result').replace(/\+/g, " "))
     },
     mounted () {
       this.ocrResultLength = document.querySelector('textarea').scrollHeight
