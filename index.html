@@ -7,14 +7,23 @@
     <script type="text/javascript" src="https://cdn.bootcss.com/crypto-js/3.1.9/crypto-js.js"></script>
     <title>OCR</title>
 </head>
-
+<style type="text/css"> 
+    #app{
+        text-align: center
+    }
+    textarea{
+        width:100%;
+        font-size: 20px;
+    }
+</style> 
 <body>
 <div id="app">
-{{ocrResult}}
+    <textarea v-bind:style="{ height: ocrResultLength + 'px' }">
+        {{ocrResult}}
+    </textarea>
 </div>
 </body>
 <script>
-
     function getQueryString (name) {
         var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
         var r = window.location.search.substr(1).match(reg)
@@ -24,21 +33,29 @@
 
     var app = new Vue({
         el: '#app',
-        computed: {
-            ocrResult: function() {
-                var EncodeOCRResult = getQueryString('ocr_result')
-                var encryptedWord;
-                var decrypted;
-                try {
-                    encryptedWord = CryptoJS.enc.Base64.parse(EncodeOCRResult); // encryptedWord via Base64.parse()
-                    decrypted = CryptoJS.enc.Utf8.stringify(encryptedWord);
-                } catch (error) {
-                    return "decode error"
-                }
-                return decrypted
+        data () {
+            return {
+                ocrResult: "",
             }
+        },
+        mounted () {
+            try {
+                    var EncodeOCRResult = getQueryString('ocr_result')
+                    var encryptedWord = CryptoJS.enc.Base64.parse(EncodeOCRResult);
+                    this.ocrResult = CryptoJS.enc.Utf8.stringify(encryptedWord);
+                } catch (error) {
+                    this.ocrResult =  "decode error"
+            }
+        },
+        computed: {
+            ocrResultLength: function() {
+                return this.ocrResult.split('\n').length * 24
+            }
+
         }
     })
 </script>
+
+
 
 </html>
