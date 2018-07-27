@@ -2,11 +2,11 @@ package utils
 
 import (
 	"github.com/deckarep/gosx-notifier"
-	"encoding/base64"
+	"net/url"
 )
 
 func SendNotify(text string) {
-	encodeString := base64.StdEncoding.EncodeToString([]byte(text))
+	encodeString := url.QueryEscape(text)
 	url := "https://diamondyuan.github.io/ocr/?ocr_result=" + encodeString
 	note := gosxnotifier.NewNotification("The result has been copied to the clipboard . " +
 		"\nClick to open in the browser")

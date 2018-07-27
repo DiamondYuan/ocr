@@ -4,27 +4,28 @@
 <head>
     <meta charset="utf-8">
     <script src="https://unpkg.com/vue"></script>
-    <script type="text/javascript" src="https://cdn.bootcss.com/crypto-js/3.1.9/crypto-js.js"></script>
     <title>OCR</title>
 </head>
-<style type="text/css"> 
+<style type="text/css">
     html, body, #app {
         height: 100%;
         margin: 0;
     }
-    #app{
+
+    #app {
         text-align: center;
-        background: linear-gradient(#EEEFEF,#CFD0D2); 
+        background: linear-gradient(#EEEFEF, #CFD0D2);
     }
-    textarea{
+
+    textarea {
         margin: 4em;
-        width:800px;
+        width: 800px;
         background: #FAF3A9;
         font-size: 20px;
-        -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7); /* Opera */
-        resize:none;
+        -webkit-box-shadow: 5px 5px 7px rgba(33, 33, 33, .7); /* Opera */
+        resize: none;
     }
-</style> 
+</style>
 <body>
 <div id="app">
     <textarea v-bind:style="{ height: ocrResultLength + 'px' }">
@@ -33,36 +34,29 @@
 </div>
 </body>
 <script>
-    function getQueryString (name) {
-        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
-        var r = window.location.search.substr(1).match(reg)
-        if (r != null) return unescape(r[2])
-        return null
+  function getQueryString (name) {
+    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+    var r = window.location.search.substr(1).match(reg)
+    if (r != null) return unescape(r[2])
+    return null
+  }
+
+  var app = new Vue({
+    el: '#app',
+    data () {
+      return {
+        ocrResult: '',
+        ocrResultLength: 0
+      }
+    },
+    created () {
+      this.ocrResult = decodeURIComponent(getQueryString('ocr_result'))
+    },
+    mounted () {
+      this.ocrResultLength = document.querySelector('textarea').scrollHeight
     }
-
-    var app = new Vue({
-        el: '#app',
-        data () {
-            return {
-                ocrResult: "",
-                ocrResultLength: 0
-            }
-        },
-        created () {
-            try {
-                    var EncodeOCRResult = getQueryString('ocr_result')
-                    var encryptedWord = CryptoJS.enc.Base64.parse(EncodeOCRResult);
-                    this.ocrResult = CryptoJS.enc.Utf8.stringify(encryptedWord).trim();
-                } catch (error) {
-                    this.ocrResult =  "decode error"
-            }
-        },
-        mounted () {
-            this.ocrResultLength = document.querySelector('textarea').scrollHeight
-        }
-    })
+  })
 </script>
-
 
 
 </html>
