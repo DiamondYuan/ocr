@@ -8,12 +8,21 @@
     <title>OCR</title>
 </head>
 <style type="text/css"> 
+    html, body, #app {
+        height: 100%;
+        margin: 0;
+    }
     #app{
-        text-align: center
+        text-align: center;
+        background: linear-gradient(#EEEFEF,#CFD0D2); 
     }
     textarea{
-        width:100%;
+        margin: 4em;
+        width:800px;
+        background: #FAF3A9;
         font-size: 20px;
+        -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7); /* Opera */
+        resize:none;
     }
 </style> 
 <body>
@@ -36,22 +45,20 @@
         data () {
             return {
                 ocrResult: "",
+                ocrResultLength: 0
             }
         },
-        mounted () {
+        created () {
             try {
                     var EncodeOCRResult = getQueryString('ocr_result')
                     var encryptedWord = CryptoJS.enc.Base64.parse(EncodeOCRResult);
-                    this.ocrResult = CryptoJS.enc.Utf8.stringify(encryptedWord);
+                    this.ocrResult = CryptoJS.enc.Utf8.stringify(encryptedWord).trim();
                 } catch (error) {
                     this.ocrResult =  "decode error"
             }
         },
-        computed: {
-            ocrResultLength: function() {
-                return this.ocrResult.split('\n').length * 24
-            }
-
+        mounted () {
+            this.ocrResultLength = document.querySelector('textarea').scrollHeight
         }
     })
 </script>
